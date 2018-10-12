@@ -24,6 +24,7 @@ from zun import objects
 from zun.objects import base as obj_base
 from zun.pci import manager as pci_manager
 from zun.scheduler import client as scheduler_client
+from zun.scheduler import placement_client
 
 LOG = logging.getLogger(__name__)
 COMPUTE_RESOURCE_SEMAPHORE = "compute_resources"
@@ -37,6 +38,7 @@ class ComputeNodeTracker(object):
         self.tracked_containers = {}
         self.old_resources = collections.defaultdict(objects.ComputeNode)
         self.scheduler_client = scheduler_client.SchedulerClient()
+        self.placement_client = placement_client.SchedulerReportClient()
         self.pci_tracker = None
 
     def _setup_pci_tracker(self, context, compute_node):
@@ -259,6 +261,7 @@ class ComputeNodeTracker(object):
             return
         # Persist the stats to the Scheduler
         self.scheduler_client.update_resource(compute_node)
+        self.placement_client.update_numa_topology(compute_node)
 
         if self.pci_tracker:
             self.pci_tracker.save()
@@ -290,7 +293,6 @@ class ComputeNodeTracker(object):
         # No migration for docker, is there will be orphan container? Nova has.
 
         cn = self.compute_node
-        print('compute_node_tracker.py.cn.numa_topology', cn.numa_topology.nodes)
 
         # update the compute_node
         self._update(cn)

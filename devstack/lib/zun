@@ -218,6 +218,20 @@ function create_zun_conf {
 
     iniset $ZUN_CONF glance images_directory $ZUN_STATE_PATH/images
 
+    iniset $ZUN_CONF placement password $SERVICE_PASSWORD
+    iniset $ZUN_CONF placement username placement
+    iniset $ZUN_CONF placement auth_type password
+    iniset $ZUN_CONF placement auth_url $KEYSTONE_AUTH_URI_V3
+    iniset $ZUN_CONF placement os_region_interface $KEYSTONE_AUTH_URI_V3
+    iniset $ZUN_CONF placement user_domain_name $SERVICE_DOMAIN_NAME
+    iniset $ZUN_CONF placement project_name $SERVICE_TENANT_NAME
+    iniset $ZUN_CONF placement project_domain_name $SERVICE_DOMAIN_NAME
+    iniset $ZUN_CONF placement os_region_name $REGION_NAME
+
+    if [ "$ZUN_USE_UWSGI" != "True" ]; then
+        iniset $ZUN_CONF api workers $API_WORKERS
+    fi
+
     if is_fedora || is_suse; then
         # zun defaults to /usr/local/bin, but fedora and suse pip like to
         # install things in /usr/bin
