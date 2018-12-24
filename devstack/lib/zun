@@ -158,8 +158,6 @@ function create_zun_accounts {
             "container" "Container As Service")
         get_or_create_endpoint $zun_service \
             "$REGION_NAME" \
-            "$zun_api_url/v1" \
-            "$zun_api_url/v1" \
             "$zun_api_url/v1"
     fi
 
@@ -183,6 +181,9 @@ function create_zun_conf {
     iniset $ZUN_CONF DEFAULT default_cpu 0
     iniset $ZUN_CONF DEFAULT default_memory 0
     iniset $ZUN_CONF DEFAULT default_disk 0
+    iniset $ZUN_CONF DEFAULT maximum_cpus 32
+    iniset $ZUN_CONF DEFAULT maximum_memory 61440
+    iniset $ZUN_CONF DEFAULT maximum_disk 210
     iniset $ZUN_CONF oslo_messaging_rabbit rabbit_userid $RABBIT_USERID
     iniset $ZUN_CONF oslo_messaging_rabbit rabbit_password $RABBIT_PASSWORD
     iniset $ZUN_CONF oslo_messaging_rabbit rabbit_host $RABBIT_HOST
@@ -253,6 +254,13 @@ function create_zun_conf {
     else
         # Show user_name and project_name instead of user_id and project_id
         iniset $ZUN_CONF DEFAULT logging_context_format_string "%(asctime)s.%(msecs)03d %(levelname)s %(name)s [%(request_id)s %(user_name)s %(project_name)s] %(instance)s%(message)s"
+    fi
+
+    if is_service_enabled zun-api; then
+        local policy_file=$ZUN_CONF_DIR/policy.json
+        cp $ZUN_DIR/etc/zun/policy.json $policy_file
+        sed -i 's/deny_everybody/context_is_admin/g' $policy_file
+        iniset $ZUN_CONF DEFAULT policy_file $policy_file
     fi
 
     # Register SSL certificates if provided
