@@ -15,6 +15,7 @@ from zun.objects import compute_node
 from zun.objects import container
 from zun.objects import container_action
 from zun.objects import container_pci_requests
+from zun.objects import directory_mapping
 from zun.objects import exec_instance
 from zun.objects import image
 from zun.objects import network
@@ -31,6 +32,7 @@ from zun.objects import zun_service
 
 Container = container.Container
 VolumeMapping = volume_mapping.VolumeMapping
+DirectoryMapping = directory_mapping.DirectoryMapping
 ZunService = zun_service.ZunService
 Image = image.Image
 Network = network.Network

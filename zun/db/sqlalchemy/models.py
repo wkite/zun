@@ -227,6 +227,19 @@ class ExecInstance(Base):
         primaryjoin='and_(ExecInstance.container_id==Container.id)')
 
 
+class DirectoryMapping(Base):
+    """Represents a directory mapping."""
+
+    __tablename__ = 'directory_mapping'
+    uuid = Column(String(36), nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    project_id = Column(String(255), nullable=True)
+    user_id = Column(String(255), nullable=True)
+    local_directory = Column(String(255), nullable=False)
+    container_path = Column(String(255), nullable=True)
+    container_uuid = Column(String(36))
+
+
 class Image(Base):
     """Represents an image. """
 

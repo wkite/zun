@@ -36,7 +36,7 @@ from zun.image import driver as img_driver
 from zun.network import network as zun_network
 from zun import objects
 from zun.volume import driver as vol_driver
-
+from zun.volume.driver import Directory as dir_driver
 
 CONF = zun.conf.CONF
 LOG = logging.getLogger(__name__)
@@ -383,9 +383,14 @@ class DockerDriver(driver.ContainerDriver):
     def _get_binds(self, context, requested_volumes):
         binds = {}
         for volume in requested_volumes:
-            source, destination = self.volume_driver.bind_mount(context,
-                                                                volume)
-            binds[source] = {'bind': destination}
+            if volume['type'] == 'dir':
+                src = volume['directory'].local_directory
+                dst = volume['directory'].container_path
+                dir_driver.is_directory_available(src)
+            else:
+                src, dst = self.volume_driver.bind_mount(context,
+                                                         volume['volume'])
+            binds[src] = {'bind': dst}
         return binds
 
     def _setup_network_for_container(self, context, container,

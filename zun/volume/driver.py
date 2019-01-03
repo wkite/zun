@@ -14,6 +14,7 @@ import abc
 import functools
 import shutil
 import six
+import os
 
 
 from oslo_log import log as logging
@@ -141,3 +142,12 @@ class Cinder(VolumeDriver):
     def check_multiattach(self, context, volume):
         ca = cinder_api.CinderAPI(context)
         return ca.get(volume.volume_id).multiattach
+
+
+class Directory(object):
+    @staticmethod
+    def is_directory_available(directory):
+        if os.path.exists(directory):
+            pass
+        else:
+            raise exception.DirectoryNotFound(directory=directory)

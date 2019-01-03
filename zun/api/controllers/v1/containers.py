@@ -512,21 +512,33 @@ class ContainersController(base.Controller):
         cinder_api = cinder.CinderAPI(context)
         requested_volumes = []
         for mount in mounts:
-            if mount.get('source'):
-                volume = cinder_api.search_volume(mount['source'])
-                auto_remove = False
-            else:
-                volume = cinder_api.create_volume(mount['size'])
-                auto_remove = True
-            cinder_api.ensure_volume_usable(volume)
-            volmapp = objects.VolumeMapping(
-                context,
-                volume_id=volume.id, volume_provider='cinder',
-                container_path=mount['destination'],
-                user_id=context.user_id,
-                project_id=context.project_id,
-                auto_remove=auto_remove)
-            requested_volumes.append(volmapp)
+            volume_type = mount.get('type', 'volume')
+            if volume_type == 'volume':
+                if mount.get('source'):
+                    volume = cinder_api.search_volume(mount['source'])
+                    auto_remove = False
+                else:
+                    volume = cinder_api.create_volume(mount['size'])
+                    auto_remove = True
+                cinder_api.ensure_volume_usable(volume)
+                volmapp = objects.VolumeMapping(
+                    context,
+                    volume_id=volume.id, volume_provider='cinder',
+                    container_path=mount['destination'],
+                    user_id=context.user_id,
+                    project_id=context.project_id,
+                    auto_remove=auto_remove)
+                requested_volumes.append(
+                    {'type': volume_type, 'volume': volmapp})
+            elif volume_type == 'dir':
+                bindmapp = objects.DirectoryMapping(
+                    context,
+                    user_id=context.user_id,
+                    project_id=context.project_id,
+                    local_directory=mount['source'],
+                    container_path=mount['destination'])
+                requested_volumes.append(
+                    {'type': volume_type, 'directory': bindmapp})
 
         return requested_volumes
 

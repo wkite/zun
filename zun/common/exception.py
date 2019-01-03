@@ -392,6 +392,14 @@ class VolumeMappingNotFound(HTTPNotFound):
 class VolumeNotFound(HTTPNotFound):
     message = _("Volume %(volume)s could not be found.")
 
+class DirectoryMappingAlreadyExists(ResourceExists):
+    message = _("A directory mapping with %(field)s %(value)s already exists.")
+
+class DirectoryMappingNotFound(HTTPNotFound):
+    message = _("Directory mapping %(vm_id)s could not be found.")
+
+class DirectoryNotFound(Invalid):
+    message = _("Directory %(directory)s could not be found.")
 
 class ImageNotFound(Invalid):
     message = _("Image %(image)s could not be found.")

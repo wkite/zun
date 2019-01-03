@@ -255,6 +255,43 @@ class Connection(object):
             ref.update(values)
         return ref
 
+    def create_directory_mapping(self, context, values):
+        if not values.get('uuid'):
+            values['uuid'] = uuidutils.generate_uuid()
+        directory_mapping = models.DirectoryMapping()
+        directory_mapping.update(values)
+        try:
+            directory_mapping.save()
+        except db_exc.DBDuplicateEntry:
+            raise exception.DirectoryMappingAlreadyExists(
+                field='local_directory',
+                values=values['local_directory'])
+        return directory_mapping
+
+    def destroy_directory_mapping(self, context, vm_id):
+        session = get_session()
+        with session.begin():
+            query = model_query(models.DirectoryMapping, session=session)
+            query = add_identity_filter(query, vm_id)
+            count = query.delete()
+            if count != 1:
+                raise exception.DirectoryMappingNotFound(vm_id)
+
+    def list_directory_mappings(self, context, filters=None, limit=None,
+                                marker=None, sort_key=None, sort_dir=None):
+        query = model_query(models.DirectoryMapping)
+        return query.filter(models.DirectoryMapping.container_uuid == filters[
+            'container_uuid']).all()
+
+    def _add_directory_mappings_filters(self, query, filters):
+        if not filters:
+            return query
+        filter_names = ['user_id', 'local_directory', 'container_uuid']
+        for name in filter_names:
+            if name in filters:
+                query = query.filter_by(**{name: filters[name]})
+        return query
+
     def _add_volume_mappings_filters(self, query, filters):
         filter_names = ['project_id', 'user_id', 'volume_id', 'container_path',
                         'container_uuid', 'volume_provider']
