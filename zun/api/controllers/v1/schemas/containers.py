@@ -39,6 +39,7 @@ _legacy_container_properties = {
     'availability_zone': parameter_types.availability_zone,
     'auto_heal': parameter_types.boolean,
     'privileged': parameter_types.boolean,
+    'host': parameter_types.hostname,
     'healthcheck': parameter_types.healthcheck,
 }
 

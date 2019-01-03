@@ -63,6 +63,7 @@ Related options:
 """),
     cfg.ListOpt("enabled_filters",
                 default=[
+                    "HostFilter",
                     "AvailabilityZoneFilter",
                     "CPUFilter",
                     "RamFilter",
