@@ -127,7 +127,7 @@ class GlanceDriver(driver.ContainerImageDriver):
         except Exception as e:
             raise exception.ZunException(six.text_type(e))
 
-    def update_image(self, context, img_id, disk_format='qcow2',
+    def update_image(self, context, img_id, disk_format='raw',
                      container_format='docker', tag=None):
         """Update an image."""
         LOG.debug('Updating an image %s in glance', img_id)
