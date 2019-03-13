@@ -53,6 +53,7 @@ _basic_keys = (
     'cpuset_cpus',
     'cpuset_mems',
     'numa_topology',
+    'dns',
 )
 
 

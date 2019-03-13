@@ -364,6 +364,13 @@ class ContainersController(base.Controller):
             healthcheck['test'] = healthcheck.pop('cmd', '')
             container_dict['healthcheck'] = healthcheck
 
+        dns = container_dict.pop('dns', {})
+        from oslo_utils import netutils
+        dns_ip = netutils.is_valid_ip(dns)
+        if dns_ip:
+            api_utils.version_check('dns', '1.24')
+            container_dict['dns'] = dns
+
         mounts = container_dict.pop('mounts', [])
         if mounts:
             api_utils.version_check('mounts', '1.11')

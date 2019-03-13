@@ -41,6 +41,7 @@ _legacy_container_properties = {
     'privileged': parameter_types.boolean,
     'host': parameter_types.hostname,
     'healthcheck': parameter_types.healthcheck,
+    'dns': parameter_types.dns,
 }
 
 legacy_container_create = {

@@ -316,6 +316,8 @@ class DockerDriver(driver.ContainerDriver):
                 timeout = container.healthcheck.get('timeout', 0)
                 healthcheck['timeout'] = timeout * 10 ** 9
                 kwargs['healthcheck'] = healthcheck
+            if container.dns:
+                host_config['dns'] = [str(container.dns)]
 
             kwargs['host_config'] = docker.create_host_config(**host_config)
             if image['tag']:

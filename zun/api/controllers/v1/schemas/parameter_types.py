@@ -201,6 +201,10 @@ healthcheck = {
     }
 }
 
+dns = {
+    'type': ['string', 'null']
+}
+
 mounts = {
     'type': ['array', 'null'],
     'items': {

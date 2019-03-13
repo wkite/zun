@@ -175,6 +175,7 @@ class Container(Base):
     started_at = Column(DateTime)
     privileged = Column(Boolean, default=False)
     healthcheck = Column(JSONEncodedDict)
+    dns = Column(String(32))
 
 
 class VolumeMapping(Base):

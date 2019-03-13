@@ -68,7 +68,8 @@ class Container(base.ZunPersistentObject, base.ZunObject):
     # Version 1.35: Add 'healthcheck' attribute
     # Version 1.36: Add 'get_count' method
     # Version 1.37: Add cpu_policy and cpuset
-    VERSION = '1.37'
+    # Version 1.38: Add 'dns' attribute
+    VERSION = '1.38'
 
     fields = {
         'id': fields.IntegerField(),
@@ -115,6 +116,7 @@ class Container(base.ZunPersistentObject, base.ZunObject):
                                                     nullable=True),
         'privileged': fields.BooleanField(nullable=True),
         'healthcheck': z_fields.JsonField(nullable=True),
+        'dns': fields.StringField(nullable=True),
     }
 
     @staticmethod
