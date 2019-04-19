@@ -56,6 +56,8 @@ docker_opts = [
     cfg.StrOpt('docker_data_root',
                default='/var/lib/docker',
                help='Root directory of persistent Docker state.'),
+    cfg.StrOpt('docker_volume_group',
+               help='Volume group of persistent Docker state.'),
 ]
 
 ALL_OPTS = (docker_opts)

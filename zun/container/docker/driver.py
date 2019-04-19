@@ -1082,15 +1082,26 @@ class DockerDriver(driver.ContainerDriver):
                     runtimes)
 
     def get_total_disk_for_container(self):
-        try:
-            (output, err) = utils.execute('df', '-B', '1G',
-                                          CONF.docker.docker_data_root,
-                                          run_as_root=True)
-        except exception.CommandError:
-            LOG.info('There was a problem while executing df -B 1G %s',
-                     CONF.docker.docker_data_root)
-            raise exception.CommandError(cmd='df')
-        total_disk = int(output.split('\n')[1].split()[1])
+        if CONF.docker.docker_volume_group is not None:
+            try:
+                (output, err) = utils.execute('lvs',
+                                              CONF.docker.docker_volume_group,
+                                              '--unit', 'g', run_as_root=True)
+            except exception.CommandError:
+                LOG.info('There was a problem while executing lvs %s --unit g',
+                         CONF.docker.docker_volume_group)
+                raise exception.CommandError(cmd='lvs')
+            total_disk = float(output.split('\n')[1].split()[3][:-1])
+        else:
+            try:
+                (output, err) = utils.execute('df', '-B', '1G',
+                                              CONF.docker.docker_data_root,
+                                              run_as_root=True)
+            except exception.CommandError:
+                LOG.info('There was a problem while executing df -B 1G %s',
+                         CONF.docker.docker_data_root)
+                raise exception.CommandError(cmd='df')
+            total_disk = int(output.split('\n')[1].split()[1])
         return int(total_disk * (1 - CONF.compute.reserve_disk_for_image))
 
     def get_cpu_used(self):
